@@ -169,6 +169,7 @@ SocketUser.updateProfile = function(socket, data, callback) {
 					newUsername: userData.username
 				});
 			}
+			callback(null, userData);
 		}
 
 		if (socket.uid === parseInt(data.uid, 10)) {
@@ -176,12 +177,8 @@ SocketUser.updateProfile = function(socket, data, callback) {
 		}
 
 		user.isAdministrator(socket.uid, function(err, isAdmin) {
-			if (err) {
-				return callback(err);
-			}
-
-			if (!isAdmin) {
-				return callback(new Error('[[error:no-privileges]]'));
+			if (err || !isAdmin) {
+				return callback(err || new Error('[[error:no-privileges]]'));
 			}
 
 			user.updateProfile(data.uid, data, done);
